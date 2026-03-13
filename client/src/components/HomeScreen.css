@@ -13,31 +13,27 @@
   .home-screen { justify-content: center; }
 }
 
-.home-hero {
-  text-align: center;
-}
+.home-hero { text-align: center; }
 
 .home-logo {
-  font-size: 52px;
+  font-size: 56px;
   line-height: 1;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 0 20px rgba(57,255,20,0.6));
+  margin-bottom: 14px;
   animation: floatBall 3s ease-in-out infinite;
 }
 
 @keyframes floatBall {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50%       { transform: translateY(-7px); }
 }
 
 .home-title {
   font-family: var(--font-display);
-  font-size: clamp(28px, 7vw, 52px);
+  font-size: clamp(30px, 8vw, 54px);
   font-weight: 900;
-  letter-spacing: 0.06em;
-  color: var(--neon);
-  text-shadow: 0 0 10px var(--neon), 0 0 30px rgba(57,255,20,0.4);
-  margin-bottom: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  margin-bottom: 10px;
 }
 
 .home-subtitle {
@@ -47,8 +43,7 @@
   margin: 0 auto;
   line-height: 1.6;
 }
-
-.home-subtitle em { color: var(--amber); font-style: normal; }
+.home-subtitle em { color: var(--red); font-style: normal; font-weight: 700; }
 
 .home-actions {
   display: flex;
@@ -70,34 +65,29 @@
 
 .form-title {
   font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--neon);
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
   margin-bottom: 20px;
-  letter-spacing: 0.05em;
 }
 
-.form-group {
-  margin-bottom: 16px;
-}
+.form-group { margin-bottom: 16px; }
 
 .input-code {
   font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0.25em;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   text-align: center;
-  color: var(--neon);
-  text-shadow: 0 0 6px rgba(57,255,20,0.4);
+  color: var(--text);
 }
 
 .form-error {
   color: var(--red);
-  font-size: 12px;
+  font-size: 13px;
   margin-bottom: 12px;
   font-weight: 600;
-  text-shadow: 0 0 6px rgba(255,56,56,0.4);
 }
 
 .form-buttons {
@@ -132,8 +122,8 @@
   content: '›';
   position: absolute;
   left: 0;
-  color: var(--neon);
+  color: var(--red);
   font-weight: 700;
 }
 
-.home-rules strong { color: var(--amber); }
+.home-rules strong { color: var(--text); font-weight: 800; }

@@ -46,18 +46,14 @@
 .challenge-card {
   text-align: center;
   padding: 14px 12px;
-  background: var(--surface);
-  border-color: rgba(57,255,20,0.2);
-  box-shadow: 0 0 20px rgba(57,255,20,0.05);
 }
 
 @media (min-width: 480px) { .challenge-card { padding: 20px 18px; } }
 @media (min-width: 720px) { .challenge-card { padding: 26px 22px; } }
 
 .challenge-round {
-  font-family: var(--font-display);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--text-muted);
@@ -66,34 +62,30 @@
 
 .challenge-stat {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 900;
-  letter-spacing: 0.03em;
-  color: var(--amber);
-  text-shadow: 0 0 10px rgba(255,215,0,0.4);
+  color: var(--text);
   margin-bottom: 4px;
 }
 
-@media (min-width: 480px) { .challenge-stat { font-size: 28px; } }
-@media (min-width: 720px) { .challenge-stat { font-size: 32px; } }
+@media (min-width: 480px) { .challenge-stat { font-size: 30px; } }
+@media (min-width: 720px) { .challenge-stat { font-size: 34px; } }
 
 .challenge-era {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--neon);
-  text-shadow: 0 0 8px rgba(57,255,20,0.4);
+  color: var(--red);
   margin-bottom: 10px;
 }
 
-@media (min-width: 480px) { .challenge-era { font-size: 17px; } }
+@media (min-width: 480px) { .challenge-era { font-size: 18px; } }
 
 .challenge-hint {
   font-size: 11px;
   color: var(--text-muted);
   max-width: 500px;
   margin: 0 auto;
-  letter-spacing: 0.04em;
 }
 
 /* ── Turn Banner ── */
@@ -103,32 +95,29 @@
   gap: 10px;
   padding: 11px 13px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 14px;
   color: var(--text-muted);
 }
 
 .turn-banner--mine {
-  background: rgba(57,255,20,0.06);
-  border-color: rgba(57,255,20,0.3);
+  background: #fff5f5;
+  border-color: var(--red);
   color: var(--text);
-  box-shadow: 0 0 12px rgba(57,255,20,0.08);
 }
 
 .turn-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--neon);
-  box-shadow: 0 0 6px var(--neon);
+  background: var(--red);
   flex-shrink: 0;
   animation: pulse 1.2s infinite;
 }
 
 .turn-dot--other {
   background: var(--text-dim);
-  box-shadow: none;
   animation: none;
 }
 
@@ -142,8 +131,7 @@
 .guess-error {
   color: var(--red);
   font-size: 13px;
-  font-weight: 500;
-  text-shadow: 0 0 6px rgba(255,56,56,0.3);
+  font-weight: 600;
 }
 
 /* ── Result Flash ── */
@@ -156,24 +144,24 @@
   font-size: 13px;
   animation: fadeSlideIn 0.3s ease;
   line-height: 1.5;
+  border: 2px solid transparent;
 }
 
 .result-flash--hit {
-  background: rgba(57,255,20,0.08);
-  border: 1px solid rgba(57,255,20,0.35);
-  color: var(--neon);
-  text-shadow: 0 0 8px rgba(57,255,20,0.3);
+  background: #dcfce7;
+  border-color: #86efac;
+  color: var(--green);
 }
 
 .result-flash--miss {
-  background: rgba(255,56,56,0.07);
-  border: 1px solid rgba(255,56,56,0.25);
+  background: #fee2e2;
+  border-color: #fca5a5;
   color: var(--red);
 }
 
 .result-icon {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -184,8 +172,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--neon); }
-  50%       { opacity: 0.5; box-shadow: 0 0 2px var(--neon); }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
 }
 
 /* ── Guess Log Card ── */
@@ -211,14 +199,13 @@
 }
 
 .turn-order-item--active {
-  background: rgba(57,255,20,0.08);
-  border: 1px solid rgba(57,255,20,0.2);
-  color: var(--neon);
-  font-weight: 600;
+  background: #fff5f5;
+  border: 2px solid var(--red);
+  color: var(--text);
+  font-weight: 700;
 }
 
 .to-num {
-  font-family: var(--font-mono);
   width: 18px;
   text-align: right;
   color: var(--text-dim);
@@ -226,7 +213,7 @@
 }
 
 .to-name { flex: 1; }
-.to-arrow { color: var(--neon); font-size: 11px; }
+.to-arrow { color: var(--red); font-size: 11px; }
 
 /* ── Mobile: sidebar as horizontal scoreboard strip ── */
 @media (max-width: 719px) {

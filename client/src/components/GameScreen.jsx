@@ -40,7 +40,7 @@ export default function GameScreen({ room, myId, socket }) {
           <div className="challenge-stat">{category.label}</div>
           <div className="challenge-era">{timeframe.label}</div>
           <div className="challenge-hint">
-            Weighted {category.display} · {timeframe.label} · Top 100 earns points
+            {category.display} · {timeframe.label} · Top 100 earns points
           </div>
         </div>
 

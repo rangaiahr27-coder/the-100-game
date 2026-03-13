@@ -1,6 +1,6 @@
 .scoreboard {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius);
   padding: 12px;
 }
@@ -8,9 +8,8 @@
 @media (min-width: 720px) { .scoreboard { padding: 14px; } }
 
 .scoreboard-title {
-  font-family: var(--font-display);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--text-muted);
@@ -34,8 +33,8 @@
 }
 
 .scoreboard-row--active {
-  background: rgba(57,255,20,0.07);
-  border: 1px solid rgba(57,255,20,0.2);
+  background: #fff5f5;
+  border: 2px solid var(--red);
 }
 
 .scoreboard-row--me .sb-name {
@@ -44,7 +43,6 @@
 }
 
 .sb-rank {
-  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-dim);
   width: 22px;
@@ -55,28 +53,27 @@
 .sb-avatar {
   width: 26px;
   height: 26px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .scoreboard-row--active .sb-avatar {
-  border-color: rgba(57,255,20,0.4);
-  color: var(--neon);
+  border-color: var(--red);
 }
 
 .sb-name {
   flex: 1;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -93,8 +90,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--neon);
-  box-shadow: 0 0 5px var(--neon);
+  background: var(--red);
   flex-shrink: 0;
   animation: sb-pulse 1.4s infinite;
 }
@@ -107,9 +103,8 @@
 .sb-score {
   font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 700;
-  color: var(--amber);
-  text-shadow: 0 0 6px rgba(255,215,0,0.4);
+  font-weight: 900;
+  color: var(--yellow);
   min-width: 34px;
   text-align: right;
 }

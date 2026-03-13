@@ -32,8 +32,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--neon);
-  box-shadow: 0 0 6px var(--neon);
+  background: var(--red);
   animation: gi-pulse 0.8s infinite;
 }
 
@@ -62,12 +61,12 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--surface2);
-  border: 1px solid rgba(57,255,20,0.25);
+  background: var(--surface);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   list-style: none;
   z-index: 200;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(57,255,20,0.08);
+  box-shadow: var(--shadow-lg);
   max-height: 200px;
   overflow-y: auto;
 }
@@ -84,6 +83,7 @@
   align-items: center;
   border-bottom: 1px solid var(--border);
   transition: background 0.1s;
+  font-weight: 600;
 }
 
 .suggestion-item:last-child { border-bottom: none; }
@@ -94,6 +94,6 @@
 
 .suggestion-item:hover,
 .suggestion-item--selected {
-  background: rgba(57,255,20,0.1);
-  color: var(--neon);
+  background: var(--surface2);
+  color: var(--text);
 }

@@ -56,7 +56,7 @@ export default function HomeScreen({ socket, onRoomJoined }) {
 
       {mode && (
         <form className="home-form card" onSubmit={mode === 'create' ? handleCreate : handleJoin}>
-          <h2 className="form-title">{mode === 'create' ? '// Create Room' : '// Join Room'}</h2>
+          <h2 className="form-title">{mode === 'create' ? 'Create Room' : 'Join Room'}</h2>
 
           <div className="form-group">
             <label className="label" htmlFor="player-name-input">Your Name</label>

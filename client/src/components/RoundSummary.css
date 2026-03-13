@@ -13,20 +13,14 @@
   .round-summary { padding: 26px 16px calc(28px + var(--safe-bottom)); gap: 18px; }
 }
 
-.rs-header {
-  text-align: center;
-  border-color: rgba(57,255,20,0.2);
-  background: rgba(57,255,20,0.03);
-}
+.rs-header { text-align: center; }
 
 .rs-round-label {
-  font-family: var(--font-display);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--neon);
-  text-shadow: 0 0 6px rgba(57,255,20,0.4);
+  color: var(--red);
   margin-bottom: 8px;
 }
 
@@ -41,8 +35,7 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 900;
-  color: var(--amber);
-  text-shadow: 0 0 10px rgba(255,215,0,0.3);
+  color: var(--text);
 }
 
 @media (min-width: 480px) { .rs-stat { font-size: 26px; } }
@@ -51,13 +44,12 @@
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
-  color: var(--neon);
+  color: var(--red);
 }
 
 .rs-hint {
   font-size: 12px;
   color: var(--text-muted);
-  letter-spacing: 0.04em;
 }
 
 .rs-players {
@@ -70,8 +62,8 @@
 @media (min-width: 480px) { .rs-player-card { padding: 16px; } }
 
 .rs-player-card--me {
-  border-color: rgba(57,255,20,0.3);
-  background: rgba(57,255,20,0.03);
+  border-color: var(--red);
+  background: #fff5f5;
 }
 
 .rs-player-header {
@@ -84,7 +76,7 @@
 .rs-rank-badge {
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--text-dim);
   width: 24px;
   flex-shrink: 0;
@@ -93,22 +85,17 @@
 .rs-avatar {
   width: 30px;
   height: 30px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--text-muted);
   flex-shrink: 0;
-}
-
-.rs-player-card--me .rs-avatar {
-  border-color: rgba(57,255,20,0.4);
-  color: var(--neon);
 }
 
 .rs-player-info {
@@ -130,7 +117,6 @@
 .rs-you { color: var(--text-dim); font-weight: 400; font-size: 12px; }
 
 .rs-player-total {
-  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-dim);
 }
@@ -144,15 +130,13 @@
 
 .rs-round-pts {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 900;
-  color: var(--neon);
-  text-shadow: 0 0 10px rgba(57,255,20,0.4);
+  color: var(--yellow);
   line-height: 1;
 }
 
 .rs-round-pts-label {
-  font-family: var(--font-display);
   font-size: 9px;
   color: var(--text-dim);
   text-transform: uppercase;
@@ -169,7 +153,6 @@
 .rs-guess-empty {
   font-size: 12px;
   color: var(--text-dim);
-  letter-spacing: 0.04em;
 }
 
 .rs-guess {
@@ -180,22 +163,23 @@
   border-radius: var(--radius-sm);
   font-size: 13px;
   background: var(--surface2);
-  border-left: 2px solid var(--border);
+  border-left: 3px solid var(--border);
   min-height: 38px;
 }
 
 .rs-guess--hit {
-  border-left-color: var(--neon);
-  background: rgba(57,255,20,0.05);
+  border-left-color: var(--green);
+  background: #f0fdf4;
 }
 
 .rs-guess--miss {
   border-left-color: var(--red);
+  background: #fff5f5;
 }
 
 .rs-guess-name {
   flex: 1;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
   min-width: 0;
   white-space: nowrap;
@@ -205,7 +189,6 @@
 
 .rs-guess-rank {
   color: var(--text-muted);
-  font-family: var(--font-mono);
   font-size: 11px;
   flex-shrink: 0;
   white-space: nowrap;
@@ -215,7 +198,7 @@
 
 .rs-guess-pts {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 900;
   font-size: 12px;
   color: var(--text-dim);
   min-width: 30px;
@@ -223,10 +206,7 @@
   flex-shrink: 0;
 }
 
-.rs-guess-pts--hit {
-  color: var(--neon);
-  text-shadow: 0 0 6px rgba(57,255,20,0.3);
-}
+.rs-guess-pts--hit { color: var(--green); }
 
 .rs-next-btn { width: 100%; min-height: 52px; }
 
@@ -234,7 +214,6 @@
   text-align: center;
   color: var(--text-muted);
   font-size: 13px;
-  letter-spacing: 0.05em;
   animation: blink 1.5s ease-in-out infinite;
 }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }

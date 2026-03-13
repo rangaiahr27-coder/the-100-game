@@ -5,7 +5,6 @@
   font-size: 12px;
   text-align: center;
   padding: 14px 0;
-  letter-spacing: 0.05em;
 }
 
 .guess-log-list {
@@ -28,38 +27,35 @@
   border-radius: var(--radius-sm);
   font-size: 13px;
   background: var(--surface2);
-  border-left: 2px solid transparent;
+  border-left: 3px solid transparent;
   min-height: 44px;
 }
 
 .guess-log-item--hit {
-  border-left-color: var(--neon);
-  background: rgba(57,255,20,0.05);
+  border-left-color: var(--green);
+  background: #f0fdf4;
 }
 
 .guess-log-item--miss {
   border-left-color: var(--red);
-  background: rgba(255,56,56,0.03);
+  background: #fff5f5;
 }
 
 .gl-avatar {
   width: 26px;
   height: 26px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--text-muted);
   flex-shrink: 0;
 }
-
-.guess-log-item--hit .gl-avatar { border-color: rgba(57,255,20,0.3); color: var(--neon); }
-.guess-log-item--miss .gl-avatar { border-color: rgba(255,56,56,0.3); color: var(--red); }
 
 .gl-body {
   flex: 1;
@@ -67,7 +63,7 @@
   min-width: 0;
 }
 
-.gl-who { font-weight: 600; color: var(--text-muted); font-size: 12px; }
+.gl-who { font-weight: 700; color: var(--text-muted); font-size: 12px; }
 .gl-arrow { color: var(--text-dim); }
 .gl-name { font-weight: 700; color: var(--text); }
 .gl-stat { color: var(--text-muted); font-size: 12px; }
@@ -76,11 +72,11 @@
 .gl-points {
   font-family: var(--font-display);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 900;
   min-width: 34px;
   text-align: right;
   flex-shrink: 0;
 }
 
-.gl-points--hit { color: var(--neon); text-shadow: 0 0 6px rgba(57,255,20,0.4); }
+.gl-points--hit { color: var(--green); }
 .gl-points--miss { color: var(--text-dim); }
