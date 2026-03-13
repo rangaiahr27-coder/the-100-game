@@ -1,0 +1,84 @@
+.guess-log {
+  display: flex;
+  flex-direction: column;
+}
+
+.guess-log-empty {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.guess-log-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Enough room to scroll through guesses without the page scrolling forever */
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+@media (min-width: 720px) {
+  .guess-log-list { max-height: 360px; }
+}
+
+.guess-log-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  background: var(--surface2);
+  border-left: 3px solid transparent;
+  /* Comfortable touch target */
+  min-height: 44px;
+}
+
+.guess-log-item--hit {
+  border-left-color: var(--green);
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.guess-log-item--miss {
+  border-left-color: var(--text-dim);
+}
+
+.gl-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.gl-body {
+  flex: 1;
+  line-height: 1.5;
+  min-width: 0; /* allow text to truncate */
+}
+
+.gl-who { font-weight: 700; color: var(--text); }
+.gl-guessed { color: var(--text-dim); }
+.gl-name { font-weight: 600; color: var(--text); }
+.gl-stat { color: var(--text-muted); font-size: 12px; }
+
+.gl-points {
+  font-size: 15px;
+  font-weight: 800;
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.gl-points--hit { color: var(--green); }
+.gl-points--miss { color: var(--text-dim); }

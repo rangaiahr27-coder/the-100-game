@@ -1,0 +1,117 @@
+.lobby {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px calc(24px + var(--safe-bottom));
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.lobby-header { text-align: center; }
+.lobby-logo { font-size: 36px; margin-bottom: 6px; }
+.lobby-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.lobby-subtitle { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
+
+.lobby-code-card { width: 100%; text-align: center; }
+.lobby-code {
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 380px) {
+  .lobby-code { font-size: 52px; }
+}
+
+.lobby-players-card { width: 100%; }
+.lobby-players {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.lobby-player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Generous touch target height */
+  min-height: 44px;
+}
+
+.player-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.player-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.lobby-info {
+  width: 100%;
+}
+
+.lobby-info h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.lobby-info ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.lobby-info li {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.5;
+}
+.lobby-info li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.lobby-start { width: 100%; }
+.lobby-waiting {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 14px;
+  text-align: center;
+}
