@@ -55,6 +55,12 @@ export default function App() {
     localStorage.setItem(SESSION_KEY, JSON.stringify({ roomCode: roomData.roomCode, playerName }));
   }
 
+  function handleLeave() {
+    socket.emit('leaveRoom', {}, () => {});
+    localStorage.removeItem(SESSION_KEY);
+    setRoom(null);
+  }
+
   const socket = socketRef.current;
   if (!socket) return <LoadingScreen message="Initializing…" />;
   if (!connected) return <LoadingScreen message="Connecting…" />;
@@ -64,7 +70,7 @@ export default function App() {
   if (room.state === 'setup') return <SetupScreen room={room} myId={myId} socket={socket} />;
   if (room.state === 'playing') return <GameScreen room={room} myId={myId} socket={socket} />;
   if (room.state === 'roundSummary') return <RoundSummary room={room} myId={myId} socket={socket} />;
-  if (room.state === 'gameOver') return <GameOver room={room} myId={myId} />;
+  if (room.state === 'gameOver') return <GameOver room={room} myId={myId} onLeave={handleLeave} />;
   return <LoadingScreen message="Loading…" />;
 }
 

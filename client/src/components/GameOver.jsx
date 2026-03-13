@@ -3,7 +3,7 @@ import './GameOver.css';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 
-export default function GameOver({ room, myId }) {
+export default function GameOver({ room, myId, onLeave }) {
   const [expanded, setExpanded] = useState(null);
   const sorted = [...room.players].sort((a, b) => b.score - a.score);
   const winner = sorted[0];
@@ -109,7 +109,10 @@ export default function GameOver({ room, myId }) {
         })}
       </div>
 
-      <p className="go-thanks">Thanks for playing · Refresh to start a new game</p>
+      <button className="btn btn-primary btn-large go-home-btn" onClick={onLeave}>
+        Play Again
+      </button>
+      <p className="go-thanks">Thanks for playing!</p>
     </div>
   );
 }

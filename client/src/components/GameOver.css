@@ -282,6 +282,8 @@
 
 .go-guess-pts--hit { color: var(--green); }
 
+.go-home-btn { width: 100%; max-width: 400px; }
+
 .go-thanks {
   color: var(--text-dim);
   font-size: 12px;

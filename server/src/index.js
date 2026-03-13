@@ -200,6 +200,26 @@ io.on('connection', (socket) => {
     }
   });
 
+  // ── LEAVE ROOM (intentional — bypasses grace period) ────────────────────
+  socket.on('leaveRoom', (_, callback) => {
+    const { roomCode, playerName } = socket.data ?? {};
+    if (!roomCode || !playerName) return callback?.({ ok: true });
+    cancelDisconnectTimer(roomCode, playerName);
+    const room = getRoom(rooms, roomCode);
+    if (!room) return callback?.({ ok: true });
+    const player = room.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+    if (player) removePlayer(room, player.id);
+    socket.leave(roomCode);
+    socket.data.roomCode = null;
+    socket.data.playerName = null;
+    if (room.players.length === 0) {
+      delete rooms[roomCode];
+    } else {
+      io.to(roomCode).emit('roomUpdated', serializeRoom(room));
+    }
+    callback?.({ ok: true });
+  });
+
   // ── NEXT ROUND ───────────────────────────────────────────────────────────
   socket.on('nextRound', (_, callback) => {
     const { roomCode } = socket.data;
