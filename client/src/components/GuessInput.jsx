@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './GuessInput.css';
 
-export default function GuessInput({ onSubmit, disabled, guessedNames }) {
+export default function GuessInput({ onSubmit, disabled, allGuessedNames = [] }) {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -17,13 +17,14 @@ export default function GuessInput({ onSubmit, disabled, guessedNames }) {
     try {
       const res = await fetch(`${API_BASE}/api/players/search?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      setSuggestions(data.filter(p => !guessedNames.includes(p.name.toLowerCase())));
+      // Filter out players already guessed across ALL rounds
+      setSuggestions(data.filter(p => !allGuessedNames.includes(p.name.toLowerCase())));
     } catch {
       setSuggestions([]);
     } finally {
       setLoading(false);
     }
-  }, [guessedNames]);
+  }, [allGuessedNames, API_BASE]);
 
   function handleChange(e) {
     const v = e.target.value;
@@ -46,11 +47,8 @@ export default function GuessInput({ onSubmit, disabled, guessedNames }) {
       setSelectedIndex(i => Math.max(i - 1, -1));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (selectedIndex >= 0) {
-        selectSuggestion(suggestions[selectedIndex].name);
-      } else {
-        submitGuess(value);
-      }
+      if (selectedIndex >= 0) selectSuggestion(suggestions[selectedIndex].name);
+      else submitGuess(value);
     } else if (e.key === 'Escape') {
       setSuggestions([]);
     }
@@ -71,7 +69,6 @@ export default function GuessInput({ onSubmit, disabled, guessedNames }) {
     setSuggestions([]);
   }
 
-  // Close suggestions on outside click
   useEffect(() => {
     function onClick(e) {
       if (!e.target.closest('.guess-input-wrapper')) setSuggestions([]);

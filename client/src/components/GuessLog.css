@@ -1,84 +1,86 @@
-.guess-log {
-  display: flex;
-  flex-direction: column;
-}
+.guess-log { display: flex; flex-direction: column; }
 
 .guess-log-empty {
   color: var(--text-dim);
-  font-size: 13px;
-  font-style: italic;
+  font-size: 12px;
   text-align: center;
-  padding: 16px 0;
+  padding: 14px 0;
+  letter-spacing: 0.05em;
 }
 
 .guess-log-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  /* Enough room to scroll through guesses without the page scrolling forever */
-  max-height: 280px;
+  gap: 5px;
+  max-height: 260px;
   overflow-y: auto;
   padding-right: 2px;
 }
 
-@media (min-width: 720px) {
-  .guess-log-list { max-height: 360px; }
-}
+@media (min-width: 720px) { .guess-log-list { max-height: 340px; } }
 
 .guess-log-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 9px;
+  padding: 9px 10px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   background: var(--surface2);
-  border-left: 3px solid transparent;
-  /* Comfortable touch target */
+  border-left: 2px solid transparent;
   min-height: 44px;
 }
 
 .guess-log-item--hit {
-  border-left-color: var(--green);
-  background: rgba(34, 197, 94, 0.06);
+  border-left-color: var(--neon);
+  background: rgba(57,255,20,0.05);
 }
 
 .guess-log-item--miss {
-  border-left-color: var(--text-dim);
+  border-left-color: var(--red);
+  background: rgba(255,56,56,0.03);
 }
 
 .gl-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--accent);
+  width: 26px;
+  height: 26px;
+  border-radius: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-size: 11px;
   font-weight: 700;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
+.guess-log-item--hit .gl-avatar { border-color: rgba(57,255,20,0.3); color: var(--neon); }
+.guess-log-item--miss .gl-avatar { border-color: rgba(255,56,56,0.3); color: var(--red); }
+
 .gl-body {
   flex: 1;
-  line-height: 1.5;
-  min-width: 0; /* allow text to truncate */
+  line-height: 1.4;
+  min-width: 0;
 }
 
-.gl-who { font-weight: 700; color: var(--text); }
-.gl-guessed { color: var(--text-dim); }
-.gl-name { font-weight: 600; color: var(--text); }
+.gl-who { font-weight: 600; color: var(--text-muted); font-size: 12px; }
+.gl-arrow { color: var(--text-dim); }
+.gl-name { font-weight: 700; color: var(--text); }
 .gl-stat { color: var(--text-muted); font-size: 12px; }
+.gl-stat--miss { color: var(--text-dim); }
 
 .gl-points {
-  font-size: 15px;
-  font-weight: 800;
-  min-width: 36px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 34px;
   text-align: right;
   flex-shrink: 0;
 }
 
-.gl-points--hit { color: var(--green); }
+.gl-points--hit { color: var(--neon); text-shadow: 0 0 6px rgba(57,255,20,0.4); }
 .gl-points--miss { color: var(--text-dim); }

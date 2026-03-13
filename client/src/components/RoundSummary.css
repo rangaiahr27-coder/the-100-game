@@ -4,101 +4,111 @@
   padding: 20px 12px calc(24px + var(--safe-bottom));
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   align-items: stretch;
   width: 100%;
 }
 
 @media (min-width: 480px) {
-  .round-summary { padding: 28px 16px calc(28px + var(--safe-bottom)); gap: 20px; }
+  .round-summary { padding: 26px 16px calc(28px + var(--safe-bottom)); gap: 18px; }
 }
 
 .rs-header {
   text-align: center;
-  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(167,139,250,0.08));
-  border-color: rgba(59,130,246,0.3);
+  border-color: rgba(57,255,20,0.2);
+  background: rgba(57,255,20,0.03);
 }
 
 .rs-round-label {
-  font-size: 12px;
+  font-family: var(--font-display);
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-dim);
-  margin-bottom: 6px;
+  letter-spacing: 0.15em;
+  color: var(--neon);
+  text-shadow: 0 0 6px rgba(57,255,20,0.4);
+  margin-bottom: 8px;
 }
 
 .rs-challenge {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
 .rs-stat {
-  font-size: 24px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 900;
-  letter-spacing: -0.02em;
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(255,215,0,0.3);
 }
 
-@media (min-width: 480px) {
-  .rs-stat { font-size: 28px; }
-}
+@media (min-width: 480px) { .rs-stat { font-size: 26px; } }
 
 .rs-era {
-  font-size: 16px;
+  font-family: var(--font-display);
+  font-size: 14px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--neon);
 }
 
-@media (min-width: 480px) {
-  .rs-era { font-size: 18px; }
+.rs-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
 }
 
 .rs-players {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.rs-player-card {
-  padding: 14px;
-}
-
-@media (min-width: 480px) {
-  .rs-player-card { padding: 18px; }
-}
+.rs-player-card { padding: 12px; }
+@media (min-width: 480px) { .rs-player-card { padding: 16px; } }
 
 .rs-player-card--me {
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: rgba(57,255,20,0.3);
+  background: rgba(57,255,20,0.03);
 }
 
 .rs-player-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: nowrap;
+  margin-bottom: 10px;
 }
 
 .rs-rank-badge {
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-dim);
-  width: 26px;
+  width: 24px;
   flex-shrink: 0;
 }
 
 .rs-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--accent);
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-family: var(--font-display);
+  font-size: 12px;
   font-weight: 700;
+  color: var(--text-muted);
   flex-shrink: 0;
+}
+
+.rs-player-card--me .rs-avatar {
+  border-color: rgba(57,255,20,0.4);
+  color: var(--neon);
 }
 
 .rs-player-info {
@@ -110,21 +120,18 @@
 }
 
 .rs-player-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.rs-you {
-  color: var(--text-dim);
-  font-weight: 400;
-  font-size: 12px;
-}
+.rs-you { color: var(--text-dim); font-weight: 400; font-size: 12px; }
 
 .rs-player-total {
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-dim);
 }
 
@@ -136,17 +143,20 @@
 }
 
 .rs-round-pts {
-  font-size: 26px;
+  font-family: var(--font-display);
+  font-size: 24px;
   font-weight: 900;
-  color: var(--green);
+  color: var(--neon);
+  text-shadow: 0 0 10px rgba(57,255,20,0.4);
   line-height: 1;
 }
 
 .rs-round-pts-label {
-  font-size: 10px;
+  font-family: var(--font-display);
+  font-size: 9px;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .rs-guesses {
@@ -157,26 +167,30 @@
 }
 
 .rs-guess-empty {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-dim);
-  font-style: italic;
+  letter-spacing: 0.04em;
 }
 
 .rs-guess {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 10px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
   background: var(--surface2);
-  border-left: 3px solid var(--border);
-  min-height: 40px;
+  border-left: 2px solid var(--border);
+  min-height: 38px;
 }
 
 .rs-guess--hit {
-  border-left-color: var(--green);
-  background: rgba(34, 197, 94, 0.06);
+  border-left-color: var(--neon);
+  background: rgba(57,255,20,0.05);
+}
+
+.rs-guess--miss {
+  border-left-color: var(--red);
 }
 
 .rs-guess-name {
@@ -191,18 +205,18 @@
 
 .rs-guess-rank {
   color: var(--text-muted);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   flex-shrink: 0;
   white-space: nowrap;
 }
 
-.rs-guess-rank--miss {
-  color: var(--text-dim);
-}
+.rs-guess-rank--miss { color: var(--text-dim); }
 
 .rs-guess-pts {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-dim);
   min-width: 30px;
   text-align: right;
@@ -210,19 +224,17 @@
 }
 
 .rs-guess-pts--hit {
-  color: var(--green);
+  color: var(--neon);
+  text-shadow: 0 0 6px rgba(57,255,20,0.3);
 }
 
-.rs-next-btn {
-  width: 100%;
-  /* Extra tall on mobile */
-  min-height: 52px;
-  font-size: 16px;
-}
+.rs-next-btn { width: 100%; min-height: 52px; }
 
 .rs-waiting {
   text-align: center;
   color: var(--text-muted);
-  font-style: italic;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  animation: blink 1.5s ease-in-out infinite;
 }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }

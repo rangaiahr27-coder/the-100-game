@@ -5,14 +5,12 @@ export default function RoundSummary({ room, myId, socket }) {
   const isHost = room.hostId === myId;
   const { category, timeframe } = room.currentChallenge;
 
-  // Group guesses by player
   const byPlayer = {};
   room.players.forEach(p => { byPlayer[p.id] = []; });
   room.guessesThisRound.forEach(g => {
     if (byPlayer[g.playerId]) byPlayer[g.playerId].push(g);
   });
 
-  // Compute round scores (last entry in roundScores array)
   const roundScores = {};
   room.players.forEach(p => {
     roundScores[p.id] = p.roundScores[p.roundScores.length - 1] ?? 0;
@@ -33,6 +31,11 @@ export default function RoundSummary({ room, myId, socket }) {
         <div className="rs-challenge">
           <span className="rs-stat">{category.label}</span>
           <span className="rs-era">{timeframe.label}</span>
+        </div>
+        <div className="rs-hint">
+          {room.round < room.totalRounds
+            ? `Round ${room.round + 1} of ${room.totalRounds} coming up — same stat & era`
+            : 'Final round — game over next!'}
         </div>
       </div>
 
@@ -57,18 +60,21 @@ export default function RoundSummary({ room, myId, socket }) {
 
             <ul className="rs-guesses">
               {byPlayer[p.id]?.length === 0 && (
-                <li className="rs-guess-empty">No guesses</li>
+                <li className="rs-guess-empty">No guess</li>
               )}
               {byPlayer[p.id]?.map((g, i) => (
                 <li key={i} className={`rs-guess ${g.points > 0 ? 'rs-guess--hit' : 'rs-guess--miss'}`}>
                   <span className="rs-guess-name">{g.guessedName}</span>
                   {g.rank ? (
-                    <span className="rs-guess-rank">#{g.rank}{g.statValue !== null ? ` (${g.statValue})` : ''}</span>
+                    <span className="rs-guess-rank">
+                      Rank #{g.rank}
+                      {g.statValue !== null && ` · ${g.statValue} ${category.display}`}
+                    </span>
                   ) : (
-                    <span className="rs-guess-rank rs-guess-rank--miss">Not in top 100</span>
+                    <span className="rs-guess-rank rs-guess-rank--miss">Not ranked</span>
                   )}
                   <span className={`rs-guess-pts ${g.points > 0 ? 'rs-guess-pts--hit' : ''}`}>
-                    {g.points > 0 ? `+${g.points}` : '0'}
+                    {g.points > 0 ? `+${g.points}` : '0 pts'}
                   </span>
                 </li>
               ))}
@@ -79,10 +85,10 @@ export default function RoundSummary({ room, myId, socket }) {
 
       {isHost ? (
         <button className="btn btn-primary btn-large rs-next-btn" onClick={handleNext}>
-          Next Round →
+          {room.round < room.totalRounds ? `Next Round →` : 'See Final Results →'}
         </button>
       ) : (
-        <p className="rs-waiting">Waiting for host to start next round…</p>
+        <p className="rs-waiting">Waiting for host to continue…</p>
       )}
     </div>
   );

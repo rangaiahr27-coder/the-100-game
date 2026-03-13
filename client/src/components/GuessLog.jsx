@@ -1,10 +1,11 @@
 import React from 'react';
 import './GuessLog.css';
 
-export default function GuessLog({ guesses, players }) {
-  // Build a quick name lookup
+export default function GuessLog({ guesses, players, category }) {
   const nameMap = {};
   players.forEach(p => { nameMap[p.id] = p.name; });
+
+  const display = category?.display ?? '';
 
   if (guesses.length === 0) {
     return (
@@ -22,13 +23,15 @@ export default function GuessLog({ guesses, players }) {
             <span className="gl-avatar">{g.playerName[0]?.toUpperCase()}</span>
             <div className="gl-body">
               <span className="gl-who">{g.playerName}</span>
-              <span className="gl-guessed"> guessed </span>
+              <span className="gl-arrow"> › </span>
               <span className="gl-name">{g.guessedName}</span>
-              {g.rank && (
+              {g.rank ? (
                 <span className="gl-stat">
                   {' '}— #{g.rank}
-                  {g.statValue !== null && ` (${g.statValue})`}
+                  {g.statValue !== null && ` · ${g.statValue}${display ? ' ' + display : ''}`}
                 </span>
+              ) : (
+                <span className="gl-stat gl-stat--miss"> — Not ranked</span>
               )}
             </div>
             <span className={`gl-points ${g.points > 0 ? 'gl-points--hit' : 'gl-points--miss'}`}>

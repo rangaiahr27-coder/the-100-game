@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './HomeScreen.css';
 
 export default function HomeScreen({ socket, onRoomJoined }) {
-  const [mode, setMode] = useState(null); // 'create' | 'join'
+  const [mode, setMode] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ export default function HomeScreen({ socket, onRoomJoined }) {
     socket.emit('createRoom', { playerName: playerName.trim() }, (res) => {
       setLoading(false);
       if (res.error) return setError(res.error);
-      onRoomJoined(res.room, socket.id, true);
+      onRoomJoined(res.room, playerName.trim());
     });
   }
 
@@ -29,7 +29,7 @@ export default function HomeScreen({ socket, onRoomJoined }) {
     socket.emit('joinRoom', { roomCode: roomCode.trim().toUpperCase(), playerName: playerName.trim() }, (res) => {
       setLoading(false);
       if (res.error) return setError(res.error);
-      onRoomJoined(res.room, socket.id, false);
+      onRoomJoined(res.room, playerName.trim());
     });
   }
 
@@ -37,7 +37,7 @@ export default function HomeScreen({ socket, onRoomJoined }) {
     <div className="home-screen">
       <div className="home-hero">
         <div className="home-logo">⚾</div>
-        <h1 className="home-title">The 100 Game</h1>
+        <h1 className="home-title">THE 100 GAME</h1>
         <p className="home-subtitle">
           Inspired by <em>Talkin' Baseball</em> — guess players who rank in the top 100 for a stat &amp; era
         </p>
@@ -46,17 +46,17 @@ export default function HomeScreen({ socket, onRoomJoined }) {
       {!mode && (
         <div className="home-actions">
           <button className="btn btn-primary btn-large" onClick={() => setMode('create')}>
-            Create Session
+            New Game
           </button>
           <button className="btn btn-secondary btn-large" onClick={() => setMode('join')}>
-            Join Session
+            Join Game
           </button>
         </div>
       )}
 
       {mode && (
         <form className="home-form card" onSubmit={mode === 'create' ? handleCreate : handleJoin}>
-          <h2 className="form-title">{mode === 'create' ? 'Create a Room' : 'Join a Room'}</h2>
+          <h2 className="form-title">{mode === 'create' ? '// Create Room' : '// Join Room'}</h2>
 
           <div className="form-group">
             <label className="label" htmlFor="player-name-input">Your Name</label>
@@ -80,7 +80,7 @@ export default function HomeScreen({ socket, onRoomJoined }) {
               <input
                 id="room-code-input"
                 className="input input-code"
-                placeholder="e.g. AB3K"
+                placeholder="AB3K"
                 value={roomCode}
                 onChange={e => setRoomCode(e.target.value.toUpperCase())}
                 maxLength={4}
@@ -106,13 +106,12 @@ export default function HomeScreen({ socket, onRoomJoined }) {
       )}
 
       <div className="home-rules card">
-        <h3>How to Play</h3>
+        <h3 className="label">How to Play</h3>
         <ul>
-          <li>A random MLB stat category &amp; multi-year timeframe is revealed</li>
+          <li>A random MLB stat &amp; multi-year timeframe is revealed</li>
           <li>Each player gets <strong>one guess</strong> per round — choose wisely</li>
-          <li>Your rank = your points (rank #73 → 73 pts, rank #1 → 1 pt)</li>
-          <li>Outside top 100 = <strong>0 points</strong></li>
-          <li>After everyone guesses, a new stat &amp; timeframe is revealed</li>
+          <li>Rank #100 = 100 pts &bull; Rank #1 = 1 pt &bull; Outside top 100 = 0 pts</li>
+          <li>Same stat &amp; timeframe for all 5 rounds — no duplicates allowed</li>
           <li>Highest cumulative score after <strong>5 rounds</strong> wins</li>
         </ul>
       </div>

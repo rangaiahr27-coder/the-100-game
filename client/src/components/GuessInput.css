@@ -2,14 +2,12 @@
   position: relative;
 }
 
-/* Mobile: stack input above button */
 .guess-input-row {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Wider screens: side by side */
 @media (min-width: 480px) {
   .guess-input-row {
     flex-direction: row;
@@ -23,7 +21,6 @@
 }
 
 .guess-input-field {
-  /* font-size inherited from .input (16px) — prevents iOS auto-zoom */
   padding-right: 36px;
 }
 
@@ -32,26 +29,24 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--accent);
-  animation: pulse 0.8s infinite;
+  background: var(--neon);
+  box-shadow: 0 0 6px var(--neon);
+  animation: gi-pulse 0.8s infinite;
 }
 
-@keyframes pulse {
+@keyframes gi-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.3; }
 }
 
-/* Full-width on mobile, auto-width on desktop */
 .guess-submit-btn {
   width: 100%;
   white-space: nowrap;
   flex-shrink: 0;
-  /* Extra tall tap target on mobile */
   min-height: 48px;
-  font-size: 16px;
 }
 
 @media (min-width: 480px) {
@@ -59,7 +54,6 @@
     width: auto;
     padding: 10px 24px;
     min-height: 44px;
-    font-size: 15px;
   }
 }
 
@@ -69,43 +63,37 @@
   left: 0;
   right: 0;
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(57,255,20,0.25);
   border-radius: var(--radius-sm);
   list-style: none;
   z-index: 200;
-  box-shadow: var(--shadow);
-  /* Shorter on mobile so keyboard doesn't hide items */
-  max-height: 180px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(57,255,20,0.08);
+  max-height: 200px;
   overflow-y: auto;
 }
 
-@media (min-width: 480px) {
-  .suggestions-list { max-height: 240px; }
-}
+@media (min-width: 480px) { .suggestions-list { max-height: 260px; } }
 
-/* Large touch targets for suggestion items */
 .suggestion-item {
   padding: 13px 14px;
   font-size: 15px;
   cursor: pointer;
-  transition: background 0.1s;
   color: var(--text);
-  /* Comfortable tap target */
   min-height: 48px;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
 }
 
+.suggestion-item:last-child { border-bottom: none; }
+
 @media (min-width: 480px) {
-  .suggestion-item {
-    padding: 10px 14px;
-    font-size: 14px;
-    min-height: 40px;
-  }
+  .suggestion-item { padding: 10px 14px; font-size: 14px; min-height: 40px; }
 }
 
 .suggestion-item:hover,
 .suggestion-item--selected {
-  background: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
+  background: rgba(57,255,20,0.1);
+  color: var(--neon);
 }

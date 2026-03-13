@@ -14,13 +14,14 @@ export default function Lobby({ room, myId, socket }) {
     <div className="lobby">
       <div className="lobby-header">
         <div className="lobby-logo">⚾</div>
-        <h1 className="lobby-title">The 100 Game</h1>
+        <h1 className="lobby-title">THE 100 GAME</h1>
         <p className="lobby-subtitle">Waiting for players…</p>
       </div>
 
       <div className="lobby-code-card card">
-        <p className="label">Room Code — share this with friends</p>
+        <p className="label">Room Code — share with friends</p>
         <div className="lobby-code">{room.roomCode}</div>
+        <p className="lobby-code-hint">Players enter this code to join</p>
       </div>
 
       <div className="card lobby-players-card">
@@ -30,7 +31,7 @@ export default function Lobby({ room, myId, socket }) {
             <li key={p.id} className="lobby-player">
               <span className="player-avatar">{p.name[0].toUpperCase()}</span>
               <span className="player-name">{p.name}</span>
-              {p.id === room.hostId && <span className="badge badge-blue">Host</span>}
+              {p.id === room.hostId && <span className="badge badge-green">Host</span>}
               {p.id === myId && <span className="badge badge-yellow">You</span>}
             </li>
           ))}
@@ -38,12 +39,12 @@ export default function Lobby({ room, myId, socket }) {
       </div>
 
       <div className="lobby-info card">
-        <h3>Game Info</h3>
+        <h3 className="label">Game Rules</h3>
         <ul>
-          <li><strong>5 rounds</strong> — each round has a different stat &amp; timeframe</li>
-          <li><strong>1 guess</strong> per player per round — make it count</li>
-          <li>Rank #100 = <strong>100 pts</strong> (hardest to get, highest reward)</li>
-          <li>Outside top 100 = <strong>0 pts</strong></li>
+          <li><strong>5 rounds</strong> — same stat &amp; timeframe all game</li>
+          <li><strong>1 guess</strong> per player per round</li>
+          <li>No duplicate picks — once a player is guessed, they're gone</li>
+          <li>Rank #100 = <strong>100 pts</strong> &bull; Outside top 100 = <strong>0 pts</strong></li>
         </ul>
       </div>
 

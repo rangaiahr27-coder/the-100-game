@@ -12,7 +12,8 @@ export default function GameScreen({ room, myId, socket }) {
   const isMyTurn = room.currentPlayerId === myId;
   const currentPlayerName = room.players.find(p => p.id === room.currentPlayerId)?.name ?? '…';
   const { category, timeframe } = room.currentChallenge;
-  const guessedNames = room.guessesThisRound.map(g => g.guessedName.toLowerCase());
+  // Filter across ALL rounds — prevents picking already-guessed players
+  const allGuessedNames = room.allGuessedNames || [];
 
   function handleSubmit(name) {
     if (submitting) return;
@@ -25,23 +26,21 @@ export default function GameScreen({ room, myId, socket }) {
         setSubmitError(res.error);
         return;
       }
-      const g = res.guess;
-      setLastResult(g);
+      setLastResult(res.guess);
     });
   }
 
   return (
     <div className="game-screen">
-      {/* ── Left column: challenge + guess input + log ── */}
+      {/* ── Left column ── */}
       <div className="game-main">
-        {/* Challenge banner */}
+        {/* Challenge card */}
         <div className="challenge-card card">
           <div className="challenge-round">Round {room.round} / {room.totalRounds}</div>
           <div className="challenge-stat">{category.label}</div>
           <div className="challenge-era">{timeframe.label}</div>
           <div className="challenge-hint">
-            Name a player who ranks in the top 100 for <strong>{category.display}</strong> — <strong>{timeframe.label}</strong>.
-            Each player gets one guess. Rank #100 = 100 pts &bull; Rank #1 = 1 pt &bull; Outside top 100 = 0 pts
+            Weighted {category.display} · {timeframe.label} · Top 100 earns points
           </div>
         </div>
 
@@ -50,7 +49,7 @@ export default function GameScreen({ room, myId, socket }) {
           {isMyTurn ? (
             <>
               <span className="turn-dot" />
-              <span><strong>Your turn!</strong> Make your one guess for this round</span>
+              <span><strong>Your turn</strong> — one guess this round</span>
             </>
           ) : (
             <>
@@ -65,8 +64,8 @@ export default function GameScreen({ room, myId, socket }) {
           <div className="guess-section">
             <GuessInput
               onSubmit={handleSubmit}
-              disabled={submitting || !isMyTurn}
-              guessedNames={guessedNames}
+              disabled={submitting}
+              allGuessedNames={allGuessedNames}
             />
             {submitError && <p className="guess-error">{submitError}</p>}
           </div>
@@ -77,17 +76,28 @@ export default function GameScreen({ room, myId, socket }) {
           <div className={`result-flash ${lastResult.points > 0 ? 'result-flash--hit' : 'result-flash--miss'}`}>
             {lastResult.points > 0 ? (
               <>
-                <span className="result-flash-icon">✓</span>
+                <span className="result-icon">✓</span>
                 <span>
-                  <strong>{lastResult.guessedName}</strong> is #{lastResult.rank}!{' '}
-                  {lastResult.statValue !== null && `(${lastResult.statValue}) `}
-                  +{lastResult.points} pts
+                  <strong>{lastResult.guessedName}</strong>
+                  {' — '}Rank #{lastResult.rank}
+                  {lastResult.statValue !== null && ` — ${lastResult.statValue} ${category.display}`}
+                  {' — '}+{lastResult.points} pts
+                </span>
+              </>
+            ) : lastResult.rank ? (
+              <>
+                <span className="result-icon">✗</span>
+                <span>
+                  <strong>{lastResult.guessedName}</strong>
+                  {' — '}Rank #{lastResult.rank}
+                  {lastResult.statValue !== null && ` — ${lastResult.statValue} ${category.display}`}
+                  {' — '}0 pts
                 </span>
               </>
             ) : (
               <>
-                <span className="result-flash-icon">✗</span>
-                <span><strong>{lastResult.guessedName}</strong> is not in the top 100 — 0 pts</span>
+                <span className="result-icon">✗</span>
+                <span><strong>{lastResult.guessedName}</strong> — Not ranked — 0 pts</span>
               </>
             )}
           </div>
@@ -96,7 +106,7 @@ export default function GameScreen({ room, myId, socket }) {
         {/* Guess log */}
         <div className="card guess-log-card">
           <h3 className="label" style={{ marginBottom: 10 }}>Guesses This Round</h3>
-          <GuessLog guesses={room.guessesThisRound} players={room.players} />
+          <GuessLog guesses={room.guessesThisRound} players={room.players} category={category} />
         </div>
       </div>
 
@@ -108,7 +118,6 @@ export default function GameScreen({ room, myId, socket }) {
           myId={myId}
         />
 
-        {/* Turn order */}
         <div className="card turn-order-card">
           <h3 className="label" style={{ marginBottom: 10 }}>Turn Order</h3>
           <ol className="turn-order-list">

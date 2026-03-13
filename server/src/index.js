@@ -14,6 +14,7 @@ const {
   getRoom,
   addPlayer,
   removePlayer,
+  updatePlayerSocketId,
   setGameChallenge,
   startRound,
   currentPlayer,
@@ -23,9 +24,6 @@ const {
   serializeRoom,
 } = require('./gameState');
 
-// In production set CLIENT_URL to your Railway client domain, e.g.
-// CLIENT_URL=https://the-100-game-client.up.railway.app
-// Leaving it unset (local dev) allows all origins.
 const CORS_ORIGIN = process.env.CLIENT_URL || '*';
 
 const app = express();
@@ -37,10 +35,8 @@ const io = new Server(server, {
   cors: { origin: CORS_ORIGIN, methods: ['GET', 'POST'] },
 });
 
-// In-memory rooms map: roomCode -> room
 const rooms = {};
 
-// Generate a unique 4-letter room code
 function generateRoomCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code;
@@ -50,7 +46,6 @@ function generateRoomCode() {
   return code;
 }
 
-// REST endpoint: player autocomplete search
 app.get('/api/players/search', async (req, res) => {
   const { q } = req.query;
   try {
@@ -61,10 +56,7 @@ app.get('/api/players/search', async (req, res) => {
   }
 });
 
-// Health check
 app.get('/api/health', (_, res) => res.json({ ok: true }));
-
-// ─── Socket.io Events ────────────────────────────────────────────────────────
 
 io.on('connection', (socket) => {
   console.log(`[connect] ${socket.id}`);
@@ -73,11 +65,12 @@ io.on('connection', (socket) => {
   socket.on('createRoom', ({ playerName }, callback) => {
     if (!playerName?.trim()) return callback({ error: 'Name required' });
     const roomCode = generateRoomCode();
-    rooms[roomCode] = createRoom(roomCode, socket.id, playerName.trim());
+    const name = playerName.trim();
+    rooms[roomCode] = createRoom(roomCode, socket.id, name);
     socket.join(roomCode);
     socket.data.roomCode = roomCode;
-    socket.data.playerName = playerName.trim();
-    console.log(`[createRoom] ${roomCode} by ${playerName}`);
+    socket.data.playerName = name;
+    console.log(`[createRoom] ${roomCode} by ${name}`);
     callback({ roomCode, room: serializeRoom(rooms[roomCode]) });
   });
 
@@ -88,17 +81,44 @@ io.on('connection', (socket) => {
     if (!room) return callback({ error: 'Room not found' });
     if (room.state !== 'lobby') return callback({ error: 'Game already in progress' });
     if (!playerName?.trim()) return callback({ error: 'Name required' });
-    if (room.players.find(p => p.name.toLowerCase() === playerName.trim().toLowerCase())) {
+    const name = playerName.trim();
+    if (room.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
       return callback({ error: 'Name already taken in this room' });
     }
 
-    addPlayer(room, socket.id, playerName.trim());
+    addPlayer(room, socket.id, name);
     socket.join(code);
     socket.data.roomCode = code;
-    socket.data.playerName = playerName.trim();
+    socket.data.playerName = name;
 
     io.to(code).emit('roomUpdated', serializeRoom(room));
-    console.log(`[joinRoom] ${playerName} joined ${code}`);
+    console.log(`[joinRoom] ${name} joined ${code}`);
+    callback({ room: serializeRoom(room) });
+  });
+
+  // ── REJOIN ROOM (reconnection / tab restore) ─────────────────────────────
+  socket.on('rejoinRoom', ({ roomCode, playerName }, callback) => {
+    const code = roomCode?.toUpperCase().trim();
+    const room = getRoom(rooms, code);
+    if (!room) return callback({ error: 'Room not found or expired' });
+    const name = playerName?.trim();
+    if (!name) return callback({ error: 'Name required' });
+
+    const existingPlayer = room.players.find(p => p.name.toLowerCase() === name.toLowerCase());
+    if (existingPlayer) {
+      // Reclaim existing seat — update socket ID
+      updatePlayerSocketId(room, name, socket.id);
+    } else if (room.state === 'lobby') {
+      addPlayer(room, socket.id, name);
+    } else {
+      return callback({ error: 'Cannot rejoin a game in progress' });
+    }
+
+    socket.join(code);
+    socket.data.roomCode = code;
+    socket.data.playerName = name;
+    console.log(`[rejoinRoom] ${name} rejoined ${code}`);
+    io.to(code).emit('roomUpdated', serializeRoom(room));
     callback({ room: serializeRoom(room) });
   });
 
@@ -111,8 +131,7 @@ io.on('connection', (socket) => {
     if (room.players.length < 1) return callback?.({ error: 'Need at least 1 player' });
 
     try {
-      io.to(roomCode).emit('gameLoading', { message: 'Fetching MLB stats…' });
-      // Generate the challenge ONCE for the entire game session
+      io.to(roomCode).emit('gameLoading', { message: 'Loading MLB stats…' });
       const challenge = generateChallenge();
       const leaderboard = await fetchLeaderboard(challenge.category, challenge.timeframe);
       setGameChallenge(room, challenge, leaderboard);
@@ -141,16 +160,14 @@ io.on('connection', (socket) => {
     const name = guessedName?.trim();
     if (!name) return callback({ error: 'Player name required' });
 
-    // Check duplicate within round
-    if (room.guessedNamesThisRound.has(name.toLowerCase())) {
-      return callback({ error: 'That player was already guessed this round' });
+    // Check duplicate across ALL rounds of this game
+    if (room.guessedNamesAllRounds.has(name.toLowerCase())) {
+      return callback({ error: 'That player has already been guessed this game' });
     }
 
-    // Look up rank
     const rankResult = lookupPlayerRank(room.leaderboard, name);
     const guessEntry = recordGuess(room, socket.id, name, rankResult);
 
-    // Broadcast the guess to all players
     io.to(roomCode).emit('guessResult', {
       guess: guessEntry,
       room: serializeRoom(room),
@@ -158,12 +175,10 @@ io.on('connection', (socket) => {
 
     callback({ ok: true, guess: guessEntry });
 
-    // Check if turn is over
     if (room.guessCountThisTurn >= GUESSES_PER_TURN) {
       const result = advanceTurn(room);
       if (result === 'roundOver') {
         endRound(room);
-        // Small delay for UX
         setTimeout(() => {
           io.to(roomCode).emit('roundEnded', serializeRoom(room));
         }, 800);
@@ -181,7 +196,6 @@ io.on('connection', (socket) => {
     if (room.hostId !== socket.id) return callback?.({ error: 'Only host can advance' });
     if (room.state !== 'roundSummary') return callback?.({ error: 'Not in round summary' });
 
-    // No API call needed — reuse the challenge fixed at game start
     startRound(room);
     io.to(roomCode).emit('roundStarted', serializeRoom(room));
     callback?.({ ok: true });

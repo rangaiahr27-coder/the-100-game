@@ -2,18 +2,17 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px;
+  padding: 12px;
 }
 
-@media (min-width: 720px) {
-  .scoreboard { padding: 16px; }
-}
+@media (min-width: 720px) { .scoreboard { padding: 14px; } }
 
 .scoreboard-title {
-  font-size: 11px;
+  font-family: var(--font-display);
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: var(--text-muted);
   margin-bottom: 10px;
 }
@@ -22,21 +21,21 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 
 .scoreboard-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 7px 8px;
   border-radius: var(--radius-sm);
   transition: background 0.15s;
 }
 
 .scoreboard-row--active {
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: rgba(57,255,20,0.07);
+  border: 1px solid rgba(57,255,20,0.2);
 }
 
 .scoreboard-row--me .sb-name {
@@ -45,29 +44,38 @@
 }
 
 .sb-rank {
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-dim);
-  width: 24px;
+  width: 22px;
   text-align: right;
   flex-shrink: 0;
 }
 
 .sb-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--accent);
+  width: 26px;
+  height: 26px;
+  border-radius: 2px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-size: 11px;
   font-weight: 700;
+  color: var(--text-muted);
   flex-shrink: 0;
+}
+
+.scoreboard-row--active .sb-avatar {
+  border-color: rgba(57,255,20,0.4);
+  color: var(--neon);
 }
 
 .sb-name {
   flex: 1;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   white-space: nowrap;
@@ -78,28 +86,30 @@
 .sb-you {
   color: var(--text-dim);
   font-weight: 400;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .sb-turn-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 6px var(--accent);
+  background: var(--neon);
+  box-shadow: 0 0 5px var(--neon);
   flex-shrink: 0;
   animation: sb-pulse 1.4s infinite;
 }
 
 @keyframes sb-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.3; }
 }
 
 .sb-score {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text);
-  min-width: 36px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--amber);
+  text-shadow: 0 0 6px rgba(255,215,0,0.4);
+  min-width: 34px;
   text-align: right;
 }

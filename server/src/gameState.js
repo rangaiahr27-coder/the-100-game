@@ -1,5 +1,3 @@
-// In-memory game state manager
-
 const GUESSES_PER_TURN = 1;
 const ROUNDS_PER_GAME = 5;
 
@@ -7,19 +5,21 @@ function createRoom(roomCode, hostId, hostName) {
   return {
     roomCode,
     hostId,
+    hostName,  // persists for reconnection
     players: [{ id: hostId, name: hostName, score: 0, roundScores: [] }],
-    state: 'lobby', // lobby | playing | roundSummary | gameOver
+    state: 'lobby',
     round: 0,
-    // The challenge (stat + timeframe) is fixed for the entire game session
     gameChallenge: null,
     gameLeaderboard: [],
     currentChallenge: null,
-    leaderboard: [], // top-100 for current challenge (same as gameLeaderboard every round)
-    turnIndex: 0,    // index into players array for whose turn it is
-    guessesThisRound: [], // { playerId, playerName, guessedName, rank, points }
+    leaderboard: [],
+    turnIndex: 0,
+    guessesThisRound: [],
     guessCountThisTurn: 0,
     guessedNamesThisRound: new Set(),
-    turnOrder: [],   // player id order for this round
+    guessedNamesAllRounds: new Set(), // persists across rounds — prevents duplicates
+    turnOrder: [],
+    allGuessesByRound: [], // [[round1 guesses], [round2 guesses], ...]
   };
 }
 
@@ -35,10 +35,25 @@ function addPlayer(room, playerId, playerName) {
 
 function removePlayer(room, playerId) {
   room.players = room.players.filter(p => p.id !== playerId);
-  // If host left, reassign
   if (room.hostId === playerId && room.players.length > 0) {
     room.hostId = room.players[0].id;
+    // hostName stays — the original host can reclaim by name
   }
+}
+
+// Update a player's socket ID (used when they reconnect)
+function updatePlayerSocketId(room, playerName, newSocketId) {
+  const player = room.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+  if (!player) return false;
+  const oldId = player.id;
+  player.id = newSocketId;
+  // Update references in turnOrder
+  room.turnOrder = room.turnOrder.map(id => (id === oldId ? newSocketId : id));
+  // Restore host if this was the original host
+  if (room.hostName && room.hostName.toLowerCase() === playerName.toLowerCase()) {
+    room.hostId = newSocketId;
+  }
+  return true;
 }
 
 function setGameChallenge(room, challenge, leaderboard) {
@@ -49,20 +64,16 @@ function setGameChallenge(room, challenge, leaderboard) {
 function startRound(room) {
   room.round += 1;
   room.state = 'playing';
-  // Reuse the single challenge for every round of the game
   room.currentChallenge = room.gameChallenge;
   room.leaderboard = room.gameLeaderboard;
   room.guessesThisRound = [];
   room.guessedNamesThisRound = new Set();
+  // guessedNamesAllRounds is intentionally NOT reset — persists across rounds
   room.guessCountThisTurn = 0;
 
-  // Determine turn order: rotate each round
-  // Round 1: players in join order
-  // Round 2+: last player in previous round goes first
   if (room.round === 1) {
     room.turnOrder = room.players.map(p => p.id);
   } else {
-    // Shift: last becomes first
     const prev = room.turnOrder;
     room.turnOrder = [...prev.slice(prev.length - 1), ...prev.slice(0, prev.length - 1)];
   }
@@ -74,25 +85,24 @@ function currentPlayer(room) {
 }
 
 function recordGuess(room, playerId, guessedName, rankResult) {
-  // rankResult: { rank, playerName, statValue } or null (not in top 100)
-  const points = rankResult ? rankResult.rank : 0;
+  // Points capped at rank 100 (rank 1 = 1pt best, rank 100 = 100pt hardest)
+  const points = rankResult && rankResult.rank <= 100 ? rankResult.rank : 0;
   const entry = {
     playerId,
     playerName: room.players.find(p => p.id === playerId)?.name ?? 'Unknown',
     guessedName,
-    rank: rankResult?.rank ?? null,
+    rank: rankResult?.rank ?? null,        // non-null even for rank 101-300
     statValue: rankResult?.statValue ?? null,
     points,
   };
   room.guessesThisRound.push(entry);
   room.guessedNamesThisRound.add(guessedName.toLowerCase());
+  room.guessedNamesAllRounds.add(guessedName.toLowerCase());
   room.guessCountThisTurn += 1;
 
-  // Update player score
   const player = room.players.find(p => p.id === playerId);
   if (player) {
     player.score += points;
-    // Track round score accumulation
     if (!player._currentRoundScore) player._currentRoundScore = 0;
     player._currentRoundScore += points;
   }
@@ -103,15 +113,12 @@ function recordGuess(room, playerId, guessedName, rankResult) {
 function advanceTurn(room) {
   room.guessCountThisTurn = 0;
   room.turnIndex += 1;
-  if (room.turnIndex >= room.turnOrder.length) {
-    // All players have had their turn — end round
-    return 'roundOver';
-  }
+  if (room.turnIndex >= room.turnOrder.length) return 'roundOver';
   return 'nextPlayer';
 }
 
 function endRound(room) {
-  // Commit round scores
+  room.allGuessesByRound.push([...room.guessesThisRound]);
   room.players.forEach(p => {
     p.roundScores.push(p._currentRoundScore ?? 0);
     p._currentRoundScore = 0;
@@ -123,6 +130,7 @@ function serializeRoom(room) {
   return {
     roomCode: room.roomCode,
     hostId: room.hostId,
+    hostName: room.hostName,
     players: room.players.map(p => ({
       id: p.id,
       name: p.name,
@@ -139,6 +147,8 @@ function serializeRoom(room) {
     guessCountThisTurn: room.guessCountThisTurn,
     guessesPerTurn: GUESSES_PER_TURN,
     guessesThisRound: room.guessesThisRound,
+    allGuessedNames: [...room.guessedNamesAllRounds],  // lowercase array for client filtering
+    allGuessesByRound: room.allGuessesByRound,
   };
 }
 
@@ -149,6 +159,7 @@ module.exports = {
   getRoom,
   addPlayer,
   removePlayer,
+  updatePlayerSocketId,
   setGameChallenge,
   startRound,
   currentPlayer,
