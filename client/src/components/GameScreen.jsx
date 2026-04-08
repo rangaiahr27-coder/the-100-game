@@ -4,12 +4,21 @@ import GuessInput from './GuessInput';
 import GuessLog from './GuessLog';
 import './GameScreen.css';
 
-export default function GameScreen({ room, myId, socket }) {
+export default function GameScreen({ room, myId, socket, onLeave }) {
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [lastResult, setLastResult] = useState(null);
 
   const isMyTurn = room.currentPlayerId === myId;
+  const isHost = room.hostId === myId;
+
+  function handleLeave() {
+    const msg = isHost
+      ? 'You are the host. Leaving will end the game for everyone. Are you sure?'
+      : 'Leave the game? You won\'t be able to rejoin.';
+    if (!window.confirm(msg)) return;
+    onLeave?.();
+  }
   const currentPlayerName = room.players.find(p => p.id === room.currentPlayerId)?.name ?? '…';
   const { category, timeframe } = room.currentChallenge;
   // Filter across ALL rounds — prevents picking already-guessed players
@@ -117,6 +126,10 @@ export default function GameScreen({ room, myId, socket }) {
           currentPlayerId={room.currentPlayerId}
           myId={myId}
         />
+
+        <button className="btn btn-ghost game-leave-btn" onClick={handleLeave}>
+          {isHost ? 'End Game' : 'Leave Game'}
+        </button>
 
         <div className="card turn-order-card">
           <h3 className="label" style={{ marginBottom: 10 }}>Turn Order</h3>

@@ -15,7 +15,10 @@
       "Bash(cd /Users/ryanrangaiah/the-100-game/client && npm install serve --save 2>&1 | tail -3 && npm run build 2>&1 | tail -5)",
       "Bash(cd ~/the-100-game/client && npm install 2>&1 | tail -5)",
       "Bash(node --version && npm --version)",
-      "Bash(cd ~/the-100-game/client && cat package-lock.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('lockfileVersion'\\)\\)\")"
+      "Bash(cd ~/the-100-game/client && cat package-lock.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('lockfileVersion'\\)\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

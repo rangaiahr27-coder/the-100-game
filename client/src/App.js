@@ -46,6 +46,12 @@ export default function App() {
     socket.on('turnChanged', setRoom);
     socket.on('roundEnded', setRoom);
     socket.on('gameError', ({ message }) => { setLoadingMsg(''); alert(`Error: ${message}`); });
+    socket.on('hostAbandoned', ({ message }) => {
+      localStorage.removeItem(SESSION_KEY);
+      setLoadingMsg('');
+      setRoom(null);
+      alert(message + ' Returning to home screen.');
+    });
 
     return () => socket.disconnect();
   }, []);
@@ -66,10 +72,10 @@ export default function App() {
   if (!connected) return <LoadingScreen message="Connecting…" />;
   if (!room) return <HomeScreen socket={socket} onRoomJoined={handleRoomJoined} />;
   if (loadingMsg) return <LoadingScreen message={loadingMsg} />;
-  if (room.state === 'lobby') return <Lobby room={room} myId={myId} socket={socket} />;
+  if (room.state === 'lobby') return <Lobby room={room} myId={myId} socket={socket} onLeave={handleLeave} />;
   if (room.state === 'setup') return <SetupScreen room={room} myId={myId} socket={socket} />;
-  if (room.state === 'playing') return <GameScreen room={room} myId={myId} socket={socket} />;
-  if (room.state === 'roundSummary') return <RoundSummary room={room} myId={myId} socket={socket} />;
+  if (room.state === 'playing') return <GameScreen room={room} myId={myId} socket={socket} onLeave={handleLeave} />;
+  if (room.state === 'roundSummary') return <RoundSummary room={room} myId={myId} socket={socket} onLeave={handleLeave} />;
   if (room.state === 'gameOver') return <GameOver room={room} myId={myId} onLeave={handleLeave} />;
   return <LoadingScreen message="Loading…" />;
 }

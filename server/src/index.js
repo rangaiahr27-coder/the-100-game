@@ -4,7 +4,7 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const { generateChallenge, fetchLeaderboard, lookupPlayerRank, searchPlayers, ALL_STATS } = require('./mlbApi');
 const {
-  GUESSES_PER_TURN, createRoom, getRoom, addPlayer, removePlayer, updatePlayerSocketId,
+  GUESSES_PER_TURN, createRoom, getRoom, addPlayer, removePlayer, removePlayerMidGame, updatePlayerSocketId,
   setGameChallenge, startRound, currentPlayer, recordGuess, advanceTurn, endRound, serializeRoom,
 } = require('./gameState');
 
@@ -181,7 +181,14 @@ io.on('connection', (socket) => {
       return callback({ error: 'That player has already been guessed this game' });
     }
 
+    // Guard: leaderboard must be populated before any guess can score
+    if (!room.leaderboard || room.leaderboard.length === 0) {
+      console.error(`[submitGuess] leaderboard is empty for room ${roomCode} — gameLeaderboard length: ${room.gameLeaderboard?.length ?? 'undefined'}`);
+      return callback({ error: 'Game data not ready. Please wait a moment and try again.' });
+    }
+
     const rankResult = lookupPlayerRank(room.leaderboard, name);
+    console.log(`[submitGuess] room=${roomCode} player="${name}" leaderboardSize=${room.leaderboard.length} rank=${rankResult?.rank ?? 'not found'} pts=${rankResult && rankResult.rank <= 100 ? rankResult.rank : 0}`);
     const guessEntry = recordGuess(room, socket.id, name, rankResult);
 
     // Broadcast to ALL players immediately (server is source of truth)
@@ -204,19 +211,51 @@ io.on('connection', (socket) => {
   socket.on('leaveRoom', (_, callback) => {
     const { roomCode, playerName } = socket.data ?? {};
     if (!roomCode || !playerName) return callback?.({ ok: true });
+
     cancelDisconnectTimer(roomCode, playerName);
     const room = getRoom(rooms, roomCode);
     if (!room) return callback?.({ ok: true });
+
     const player = room.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
-    if (player) removePlayer(room, player.id);
+    const isHost = player && player.id === room.hostId;
+    const inGame = room.state === 'playing' || room.state === 'roundSummary';
+
+    // Detach socket from room immediately
     socket.leave(roomCode);
     socket.data.roomCode = null;
     socket.data.playerName = null;
-    if (room.players.length === 0) {
+
+    if (inGame && isHost) {
+      // Host explicitly quit during a game — end it for everyone
+      console.log(`[leaveRoom] Host ${playerName} left room ${roomCode} mid-game — tearing down`);
+      io.to(roomCode).emit('hostAbandoned', { message: `${playerName} (host) left the game.` });
       delete rooms[roomCode];
+    } else if (inGame && player) {
+      // Non-host left mid-game — remove them and continue
+      console.log(`[leaveRoom] ${playerName} left room ${roomCode} mid-game — continuing without them`);
+      const result = removePlayerMidGame(room, player.id);
+
+      if (room.players.length === 0) {
+        delete rooms[roomCode];
+      } else if (result === 'roundOver') {
+        endRound(room);
+        io.to(roomCode).emit('roundEnded', serializeRoom(room));
+      } else if (result === 'turnChanged') {
+        room.guessCountThisTurn = 0;
+        io.to(roomCode).emit('turnChanged', serializeRoom(room));
+      } else {
+        io.to(roomCode).emit('roomUpdated', serializeRoom(room));
+      }
     } else {
-      io.to(roomCode).emit('roomUpdated', serializeRoom(room));
+      // Lobby / setup — just remove player
+      if (player) removePlayer(room, player.id);
+      if (room.players.length === 0) {
+        delete rooms[roomCode];
+      } else {
+        io.to(roomCode).emit('roomUpdated', serializeRoom(room));
+      }
     }
+
     callback?.({ ok: true });
   });
 

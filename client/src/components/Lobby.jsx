@@ -1,13 +1,17 @@
 import React from 'react';
 import './Lobby.css';
 
-export default function Lobby({ room, myId, socket }) {
+export default function Lobby({ room, myId, socket, onLeave }) {
   const isHost = room.hostId === myId;
 
   function handleStart() {
     socket.emit('startGame', {}, (res) => {
       if (res?.error) alert(res.error);
     });
+  }
+
+  function handleLeave() {
+    onLeave?.();
   }
 
   return (
@@ -59,6 +63,10 @@ export default function Lobby({ room, myId, socket }) {
       ) : (
         <p className="lobby-waiting">Waiting for the host to start…</p>
       )}
+
+      <button className="btn btn-ghost lobby-leave" onClick={handleLeave}>
+        Leave Room
+      </button>
     </div>
   );
 }

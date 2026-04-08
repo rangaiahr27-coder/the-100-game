@@ -120,6 +120,38 @@ function endRound(room) {
   room.state = room.round >= ROUNDS_PER_GAME ? 'gameOver' : 'roundSummary';
 }
 
+// Remove a player mid-game, adjusting turnOrder and turnIndex correctly.
+// Returns 'roundOver' | 'turnChanged' | 'noChange'
+function removePlayerMidGame(room, playerId) {
+  const playerTurnIdx = room.turnOrder.indexOf(playerId);
+
+  room.players = room.players.filter(p => p.id !== playerId);
+  room.turnOrder = room.turnOrder.filter(id => id !== playerId);
+
+  // Reassign host metadata if needed
+  if (room.hostId === playerId && room.players.length > 0) {
+    room.hostId = room.players[0].id;
+    room.hostName = room.players[0].name;
+  }
+
+  if (playerTurnIdx === -1) return 'noChange'; // not in turn order (shouldn't happen)
+
+  // If the leaver was before current turn, shift index back to keep same player active
+  if (playerTurnIdx < room.turnIndex) {
+    room.turnIndex = Math.max(0, room.turnIndex - 1);
+  }
+
+  // Check whether the round is now exhausted
+  if (room.turnOrder.length === 0 || room.turnIndex >= room.turnOrder.length) {
+    return 'roundOver';
+  }
+
+  // If it was the leaver's turn, the player now at that index becomes current
+  if (playerTurnIdx === room.turnIndex) return 'turnChanged';
+
+  return 'noChange';
+}
+
 function serializeRoom(room) {
   return {
     roomCode: room.roomCode,
@@ -143,6 +175,6 @@ function serializeRoom(room) {
 
 module.exports = {
   GUESSES_PER_TURN, ROUNDS_PER_GAME,
-  createRoom, getRoom, addPlayer, removePlayer, updatePlayerSocketId,
+  createRoom, getRoom, addPlayer, removePlayer, removePlayerMidGame, updatePlayerSocketId,
   setGameChallenge, startRound, currentPlayer, recordGuess, advanceTurn, endRound, serializeRoom,
 };

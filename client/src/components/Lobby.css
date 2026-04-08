@@ -97,6 +97,11 @@
 .lobby-info strong { color: var(--text); font-weight: 800; }
 
 .lobby-start { width: 100%; }
+.lobby-leave {
+  width: 100%;
+  color: var(--text-muted);
+  font-size: 13px;
+}
 .lobby-waiting {
   color: var(--text-muted);
   font-size: 13px;

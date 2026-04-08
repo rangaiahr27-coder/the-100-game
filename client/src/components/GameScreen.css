@@ -252,3 +252,12 @@
 
   .turn-order-card { display: none; }
 }
+
+.game-leave-btn {
+  width: 100%;
+  font-size: 12px;
+  padding: 8px;
+  min-height: 36px;
+  opacity: 0.7;
+}
+.game-leave-btn:hover { opacity: 1; }

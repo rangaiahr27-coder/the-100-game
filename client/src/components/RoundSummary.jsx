@@ -1,7 +1,7 @@
 import React from 'react';
 import './RoundSummary.css';
 
-export default function RoundSummary({ room, myId, socket }) {
+export default function RoundSummary({ room, myId, socket, onLeave }) {
   const isHost = room.hostId === myId;
   const { category, timeframe } = room.currentChallenge;
 
@@ -22,6 +22,14 @@ export default function RoundSummary({ room, myId, socket }) {
     socket.emit('nextRound', {}, (res) => {
       if (res?.error) alert(res.error);
     });
+  }
+
+  function handleLeave() {
+    const msg = isHost
+      ? 'You are the host. Leaving will end the game for everyone. Are you sure?'
+      : 'Leave the game? You won\'t be able to rejoin.';
+    if (!window.confirm(msg)) return;
+    onLeave?.();
   }
 
   return (
@@ -90,6 +98,10 @@ export default function RoundSummary({ room, myId, socket }) {
       ) : (
         <p className="rs-waiting">Waiting for host to continue…</p>
       )}
+
+      <button className="btn btn-ghost rs-leave-btn" onClick={handleLeave}>
+        {isHost ? 'End Game' : 'Leave Game'}
+      </button>
     </div>
   );
 }
